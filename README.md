@@ -2,8 +2,8 @@
 
 Deterministyczny kalkulator świadczeń ZUS oraz analizator dokumentacji (C# / .NET + React + Azure AI Document Intelligence), który zamienia wielostronicowe teczki i zawiłe przepisy Kodeksu pracy oraz ustawy zasiłkowej w przejrzysty harmonogram urlopów, dokładne wyliczenie kwot i listę wymaganych formalności.
 
-> **Demo online (hosting na Azure App Service):** `[https://przewodnik-rodzica-demo2026.azurewebsites.net]`  
-> **Repozytorium:** `[https://github.com/Fyszu/PrzewodnikRodzica]`  
+> **Demo online (hosting na Azure App Service):** https://przewodnik-rodzica-demo2026.azurewebsites.net  
+> **Repozytorium:** https://github.com/Fyszu/PrzewodnikRodzica  
 
 ---
 
