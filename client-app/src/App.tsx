@@ -79,10 +79,10 @@ export default function App() {
   };
 
   const navItems: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
-    { id: 'calculator', label: 'Zintegrowany Kalkulator', icon: <Calculator className="h-4 w-4" /> },
-    { id: 'documents', label: 'Test Sprawy (PDF / ZUS)', icon: <FileText className="h-4 w-4" /> },
-    { id: 'simulations', label: 'mObywatel / PUE / Wnioski', icon: <ShieldCheck className="h-4 w-4" /> },
-    { id: 'admin', label: 'Panel Admina i AI', icon: <Settings className="h-4 w-4" /> },
+    { id: 'calculator', label: 'Kalkulator', icon: <Calculator className="h-4 w-4" /> },
+    { id: 'documents', label: 'Analiza plików PDF', icon: <FileText className="h-4 w-4" /> },
+    { id: 'simulations', label: 'mObywatel / PUE / Wnioski (symulacja)', icon: <ShieldCheck className="h-4 w-4" /> },
+    { id: 'admin', label: 'Panel Admina', icon: <Settings className="h-4 w-4" /> },
   ];
 
   return (

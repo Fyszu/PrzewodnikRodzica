@@ -52,11 +52,11 @@ export function ResultsPanel({ result }: Props) {
             <HeartHandshake className="mt-0.5 h-6 w-6 shrink-0 text-slate-700" />
             <div>
               <h3 className="text-base font-semibold text-slate-900">
-                Tryb szczególnego wsparcia — spokojny przewodnik formalny
+                Tryb szczególnego wsparcia
               </h3>
               <p className="mt-1 text-sm text-slate-700">
-                Włączyliśmy stonowany układ prezentacji. Poniżej znajdziesz dokładny wymiar przysługujących świadczeń,
-                minimalną listę wymaganych dokumentów oraz sprawdzone organizacje charytatywne oferujące bezpłatną pomoc.
+                Poniżej oprócz dokładnego wymiaru przysługujących świadczeń oraz listy wymaganych dokumentów, 
+                znajdziesz również sprawdzone organizacje charytatywne oferujące bezpłatną pomoc.
               </p>
             </div>
           </div>
@@ -317,7 +317,7 @@ export function ResultsPanel({ result }: Props) {
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
           <h3 className="mb-3 flex items-center gap-2 text-base font-bold text-slate-900">
             <AlertTriangle className="h-5 w-5 text-amber-600" />
-            Radar Ryzyk i Pułapek Prawnych
+            Uwaga
           </h3>
           <div className="space-y-3">
             {result.risks.map((risk) => (

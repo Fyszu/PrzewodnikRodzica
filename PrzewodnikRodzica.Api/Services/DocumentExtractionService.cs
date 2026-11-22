@@ -45,7 +45,7 @@ public class DocumentExtractionService
     }
 
     public int HardMonthlyPageBudget => _config.GetValue("AzureDocumentIntelligence:HardMonthlyPageBudget", 1500);
-    public int MaxPagesPerFile => _config.GetValue("AzureDocumentIntelligence:MaxPagesPerFile", 65);
+    public int MaxPagesPerFile => _config.GetValue("AzureDocumentIntelligence:MaxPagesPerFile", 100);
 
     public async Task<DocumentAnalysisResponse> AnalyzePdfAsync(byte[] pdfBytes, string fileName, CancellationToken ct)
     {
@@ -65,7 +65,7 @@ public class DocumentExtractionService
                 ExtractionEngine = cached.EngineUsed,
                 UsedAiEngine = cached.EngineUsed.Contains("Azure"),
                 ServedFromCache = true,
-                Notice = "Wynik pobrany z pamięci podręcznej (SHA-256) — zero dodatkowych kosztów OCR.",
+                Notice = "Wynik analizy pliku PDF pobrany z pamięci podręcznej.",
                 ParsedDocument = cachedParsed,
                 Calculation = cachedCalc,
                 Quota = _store.GetQuotaStatus(HardMonthlyPageBudget)
@@ -120,7 +120,7 @@ public class DocumentExtractionService
 
                 Operation<AnalyzeResult> operation = await client.AnalyzeDocumentAsync(WaitUntil.Completed, options, ct);
                 extractedText = operation.Value.Content ?? pdfPigText;
-                engineUsed = "Azure AI Document Intelligence (prebuilt-layout, OCR + tabele + pola wyboru)";
+                engineUsed = "Azure AI Document Intelligence";
                 usedAi = true;
 
                 _store.RecordAzurePagesUsed(pageCount, fileName);

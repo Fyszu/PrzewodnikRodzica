@@ -74,7 +74,7 @@ public class BenefitEngine
             result.IsEligibleForMaternityBenefit = true;
             result.EligibilityHeadline = request.Scenario == ParenthoodScenario.StillbirthOrChildDeath
                 ? "Przysługuje zasiłek macierzyński w trybie szczególnym (100% podstawy) oraz zasiłek pogrzebowy"
-                : "Przysługuje prawo do zasiłku macierzyńskiego (brak okresu wyczekiwania)";
+                : "Przysługuje prawo do zasiłku (brak okresu wyczekiwania)";
 
             BuildMainTimeline(request, parameters, result);
         }
@@ -91,7 +91,28 @@ public class BenefitEngine
 
         if (result.IsSensitiveSituationMode)
         {
-            result.CharitySupport = CharitySupportCatalog.GetAll();
+            var allCharities = CharitySupportCatalog.GetAll();
+
+            if (request.Scenario == ParenthoodScenario.StillbirthOrChildDeath)
+            {
+                result.CharitySupport = allCharities
+                    .Where(c => c.Name.Contains("Ernesta", StringComparison.OrdinalIgnoreCase)
+                             || c.Name.Contains("Tęczowy", StringComparison.OrdinalIgnoreCase)
+                             || c.Name.Contains("Hospicjum", StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+            else
+            {
+                bool showPremature = request.CalculateSupplementaryMaternity;
+                bool showZaZyciem = request.HasZaZyciemCertificate;
+
+                result.CharitySupport = allCharities
+                    .Where(c =>
+                        (showPremature && c.Name.Contains("Wcześniak", StringComparison.OrdinalIgnoreCase)) ||
+                        (showZaZyciem && (c.Name.Contains("Gajusz", StringComparison.OrdinalIgnoreCase)
+                                       || c.Name.Contains("Hospicjum", StringComparison.OrdinalIgnoreCase))))
+                    .ToList();
+            }
         }
 
         return result;
@@ -286,6 +307,53 @@ public class BenefitEngine
                 "slate"));
 
             result.FuneralAllowanceAmount = parameters.FuneralAllowanceStillbirth;
+            return;
+        }
+
+        // Scenariusz 1b: Wniosek wyłącznie o urlop ojcowski (ojciec jako wnioskodawca)
+        if (request.ClaimScope == ClaimScope.PaternityLeaveOnly)
+        {
+            int maxPaternityDays = parameters.PaternityWeeks * 7; // 14 dni
+            int days = request.RequestedLeaveDaysOverride is > 0
+                ? Math.Min(request.RequestedLeaveDaysOverride.Value, maxPaternityDays)
+                : maxPaternityDays;
+
+            result.Timeline.Add(CreateBlock(
+                "paternity-applicant",
+                days < maxPaternityDays ? $"Urlop ojcowski (część — {days} dni)" : "Urlop ojcowski",
+                "Ojciec / Wnioskodawca",
+                cursor,
+                days,
+                parameters.PaternityRate,
+                0m,
+                result.PrimaryParentBase,
+                parameters,
+                "Art. 182^3 KP (100% podstawy, wyłączne prawo ojca — maks. 14 dni w ciągu 12 mies. od porodu)",
+                "sky"));
+            return;
+        }
+
+        // Scenariusz 1c: Wniosek wyłącznie o część urlopu rodzicielskiego ojca (np. druk ZUR)
+        if (request.ClaimScope == ClaimScope.FatherParentalOnly)
+        {
+            int pool = GetParentalPoolWeeks(request, parameters, false);
+            int maxFatherDays = (pool - parameters.NonTransferableParentalWeeksPerParent) * 7;
+            int days = request.RequestedLeaveDaysOverride is > 0
+                ? Math.Clamp(request.RequestedLeaveDaysOverride.Value, 7, maxFatherDays)
+                : Math.Max(request.SecondParentParentalWeeks, 9) * 7;
+
+            result.Timeline.Add(CreateBlock(
+                "parental-father-applicant",
+                "Urlop rodzicielski (część ojca)",
+                "Ojciec / Wnioskodawca",
+                cursor,
+                days,
+                parameters.SecondParentExclusiveParentalRate, // 70%
+                0m,
+                result.PrimaryParentBase,
+                parameters,
+                "Art. 182^1a § 4 KP / Art. 31 ust. 3f ustawy zasiłkowej (70%)",
+                "cyan"));
             return;
         }
 
@@ -747,7 +815,9 @@ public class BenefitEngine
             });
         }
 
-        if (request.SubmitFullApplicationWithin21Days && request.Scenario != ParenthoodScenario.StillbirthOrChildDeath)
+        if (request.ClaimScope == ClaimScope.FullMaternityAndParental
+            && request.SubmitFullApplicationWithin21Days
+            && request.Scenario != ParenthoodScenario.StillbirthOrChildDeath)
         {
             result.Risks.Add(new RiskAlert
             {
@@ -844,6 +914,36 @@ public class BenefitEngine
                 SubmitTo = "ZUS",
                 Deadline = "Do 12 miesięcy od dnia pochówku",
                 Notes = "Dołącz rachunki za pogrzeb (rodzicom przysługuje pełne 7 000 zł nawet przy niższych kosztach) oraz kartę zgonu / zaświadczenie o martwym urodzeniu."
+            });
+            return;
+        }
+
+        if (request.ClaimScope == ClaimScope.PaternityLeaveOnly)
+        {
+            result.RequiredDocuments.Add(new RequiredDocumentItem
+            {
+                FormCode = request.EmploymentTitle == EmploymentTitle.Employee ? "Wniosek KP / Z-3" : "ZAM",
+                Name = "Wniosek o urlop ojcowski (do 2 tygodni, 100% podstawy)",
+                SubmitTo = request.EmploymentTitle == EmploymentTitle.Employee
+                    ? (zusIsPayer ? "Pracodawca -> ZUS (z drukiem Z-3)" : "Pracodawca")
+                    : "Bezpośrednio do ZUS (eZUS)",
+                Deadline = "Min. 7 dni przed rozpoczęciem, do ukończenia przez dziecko 12. miesiąca życia",
+                Notes = "Urlop ojcowski można wykorzystać jednorazowo (14 dni) albo w 2 częściach po 7 dni (art. 182^3 KP). Od 24.10.2026 r. formularz ZAO został zastąpiony zintegrowanym wnioskiem ZAM."
+            });
+            return;
+        }
+
+        if (request.ClaimScope == ClaimScope.FatherParentalOnly)
+        {
+            result.RequiredDocuments.Add(new RequiredDocumentItem
+            {
+                FormCode = request.EmploymentTitle == EmploymentTitle.Employee ? "Wniosek KP / Z-3" : "ZAM",
+                Name = "Wniosek o część urlopu rodzicielskiego dla ojca (70% podstawy)",
+                SubmitTo = request.EmploymentTitle == EmploymentTitle.Employee
+                    ? (zusIsPayer ? "Pracodawca -> ZUS (z drukiem Z-3)" : "Pracodawca")
+                    : "Bezpośrednio do ZUS (eZUS)",
+                Deadline = "Min. 21 dni przed rozpoczęciem (dla pracownika) lub przed startem zasiłku (JDG)",
+                Notes = "9 tygodni z puli urlopu rodzicielskiego to wyłączna, nieprzenoszalna część drugiego rodzica (zawsze 70%). Od 24.10.2026 r. druk ZUR został zastąpiony przez ZAM."
             });
             return;
         }

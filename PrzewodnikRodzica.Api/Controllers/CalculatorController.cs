@@ -46,15 +46,9 @@ public class CalculatorController : ControllerBase
         {
             new
             {
-                Module = "Analiza wgrywanych wniosków i zaœwiadczeñ PDF (Z-3, ZAM, ZAS-26, e-ZLA)",
-                Technology = "Azure AI Document Intelligence (model prebuilt-layout — OCR, tabele wynagrodzeñ, zaznaczone pola wyboru)",
-                Role = "Wy³¹cznie ekstrakcja strukturalna tekstu, tabel i kratek wyboru ze skanów PDF do ujednoliconego formatu Markdown."
-            },
-            new
-            {
-                Module = "Silnik obliczeñ prawnych, kwalifikacja uprawnieñ, wykrywanie ryzyk",
-                Technology = "100% deterministyczny silnik regu³ w C# (.NET 8) pokryty testami jednostkowymi xUnit — BEZ halucynacji modeli jêzykowych (LLM)",
-                Role = "Gwarantuje powtarzaln¹ zgodnoœæ obliczeñ z Kodeksem pracy, ustaw¹ zasi³kow¹ i rozporz¹dzeniem z 27.09.2026 r."
+                Module = "Analiza wgrywanych wniosków i zaœwiadczeñ PDF",
+                Technology = "Azure AI Document Intelligence (model prebuilt-layout — OCR)",
+                Role = "Wy³¹cznie ekstrakcja strukturalna tekstu, tabel i kratek wyboru ze skanów PDF do ujednoliconego formatu Markdown. Mo¿e zawieraæ b³êdy odczytu tekstu, zw³aszcza przy niewyraŸnych skanach."
             }
         }
     });

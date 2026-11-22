@@ -27,6 +27,13 @@ public enum SpecialTerminationReason
     StandardTerminationBeforeBirth = 5
 }
 
+public enum ClaimScope
+{
+    FullMaternityAndParental = 0, // domyślnie — pełna wsteczna kompatybilność z testami xUnit i UI
+    PaternityLeaveOnly = 1,       // wyłącznie urlop ojcowski (art. 182^3 KP, 100%, maks. 14 dni)
+    FatherParentalOnly = 2        // wyłącznie część urlopu rodzicielskiego ojca (np. ZUR, 70%)
+}
+
 public class MonthlySalaryRecord
 {
     public int Year { get; set; }
@@ -80,6 +87,8 @@ public class CalculationRequest
     public DateOnly? LeaveStartDate { get; set; } // opcjonalnie do 6 tyg. przed porodem
     public int ChildrenCount { get; set; } = 1;
     public bool HasZaZyciemCertificate { get; set; }
+    public ClaimScope ClaimScope { get; set; } = ClaimScope.FullMaternityAndParental;
+    public int? RequestedLeaveDaysOverride { get; set; } // np. 7 dni z 2. części ojcowskiego lub 57 dni z ZUR
 
     // Dla adopcji / rodziny zastępczej
     public DateOnly? ChildBirthDate { get; set; }

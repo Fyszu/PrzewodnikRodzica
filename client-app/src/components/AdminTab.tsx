@@ -43,7 +43,7 @@ export function AdminTab() {
       setIsAdmin(true);
       setMessage({
         type: 'ok',
-        text: 'Zalogowano jako Administrator (sesja HttpOnly Cookie z rolą Admin). Możesz edytować parametry.',
+        text: 'Zalogowano jako Administrator - możesz edytować parametry.',
       });
     } catch (err) {
       setMessage({ type: 'err', text: err instanceof Error ? err.message : 'Błąd logowania administratora' });
@@ -106,11 +106,12 @@ export function AdminTab() {
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs">
             <h3 className="flex items-center gap-2 text-base font-bold text-slate-900">
               <Gauge className="h-5 w-5 text-emerald-700" />
-              Ochrona budżetu Azure OCR (Hard QuotaGuard)
+              Ochrona budżetu Azure  
             </h3>
             <p className="mt-1 text-xs text-slate-600">
-              Twardy licznik stron w SQLite chroniący przed niekontrolowanym zużyciem planu Azure S0 (PAYG). Ponowne
-              wgranie tych samych spraw obsługuje cache SHA-256 za 0 zł.
+              Jedynie na potrzeby demonstracji - licznik stron chroniący przed 
+			  niekontrolowanym zużyciem planu Azure Document Intelligence S0 (PAYG). Ponowne
+              wgranie tych samych spraw obsługuje cache (SHA-256).
             </p>
             <div className="mt-4 grid grid-cols-3 gap-3">
               <div className="rounded-xl bg-slate-50 p-3">
@@ -122,10 +123,6 @@ export function AdminTab() {
               <div className="rounded-xl bg-slate-50 p-3">
                 <div className="text-xs text-slate-500">Pozostało</div>
                 <div className="text-xl font-bold text-emerald-700">{quota.remainingPages}</div>
-              </div>
-              <div className="rounded-xl bg-slate-50 p-3">
-                <div className="text-xs text-slate-500">Szac. koszt</div>
-                <div className="text-xl font-bold text-slate-900">{quota.estimatedCostPln.toFixed(2)} zł</div>
               </div>
             </div>
           </div>
@@ -171,7 +168,7 @@ export function AdminTab() {
             {isAdmin ? (
               <div className="flex items-center gap-2">
                 <span className="rounded-lg bg-emerald-100 px-3 py-1.5 text-xs font-bold text-emerald-800">
-                  Aktywna rola: Admin (Cookie)
+                  Aktywna rola: Admin
                 </span>
                 <button
                   type="button"

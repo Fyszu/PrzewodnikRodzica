@@ -31,7 +31,6 @@ export function SimulationsTab({
   personas,
   loggedAccount,
   onLoginPersona,
-  onLogout,
   onLoadIntoCalculator,
 }: Props) {
   const [applications, setApplications] = useState<SubmittedApplicationRecord[]>([]);
@@ -341,7 +340,7 @@ export function SimulationsTab({
       {/* Historia złożonych wniosków w SQLite */}
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs">
         <h3 className="text-base font-bold text-slate-900">
-          Rejestr wysłanych wniosków i zapytań (zapisane w SQLite)
+          Rejestr wysłanych wniosków i zapytań
         </h3>
         {applications.length === 0 ? (
           <p className="mt-2 text-sm text-slate-500">Brak złożonych wniosków w tej sesji testowej.</p>

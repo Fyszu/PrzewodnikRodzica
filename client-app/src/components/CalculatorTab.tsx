@@ -69,6 +69,11 @@ export function CalculatorTab({
       setLoading(false);
     }
   };
+  
+  useEffect(() => {
+    runCalc(request);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requestVersion]);
 
   useEffect(() => {
     if (!loggedAccount) {
