@@ -21,11 +21,11 @@ Zastosowanie czystego modelu językowego (LLM) do obliczeń finansowych i interp
 
 ## Technologie i biblioteki
 
-> **Backend & Silnik domenowy:** C# / .NET, ASP.NET Core Web API, xUnit, PdfPig
-> **Frontend:** React, TypeScript, Vite, Tailwind CSS, Lucide Icons
-> **OCR / Ekstrakcja strukturalna:** Azure AI Document Intelligence
-> **Hosting:** Azure App Service
-> **Cache:** SQLite, przechowywanie PDFów w SHA-256
+- **Backend & Silnik domenowy:** C# / .NET, ASP.NET Core Web API, xUnit, PdfPig
+- **Frontend:** React, TypeScript, Vite, Tailwind CSS, Lucide Icons
+- **OCR / Ekstrakcja strukturalna:** Azure AI Document Intelligence
+- **Hosting:** Azure App Service
+- **Cache:** SQLite, przechowywanie PDFów w SHA-256
 
 ---
 
